@@ -1,6 +1,6 @@
 # Deep Research API
 
-A powerful AI-driven research API that conducts comprehensive research using multi-agent workflows with Google's Gemini models. The system generates research questions, searches the web for answers, compiles detailed reports, and iteratively improves them through review cycles.
+A powerful AI-driven research API that conducts comprehensive research using multi-agent workflows with Google's Gemini models or Ollama (local LLM). The system generates research questions, searches the web for answers, compiles detailed reports, and iteratively improves them through review cycles.
 
 ## 🚀 Features
 
@@ -15,7 +15,9 @@ A powerful AI-driven research API that conducts comprehensive research using mul
 
 - **Python 3.11+** (for local development)
 - **Docker & Docker Compose** (recommended)
-- **Google GenAI API Key** - Get one from [Google AI Studio](https://makersuite.google.com/app/apikey)
+- **LLM Provider**: Choose one:
+  - **Google GenAI API Key** - Get one from [Google AI Studio](https://makersuite.google.com/app/apikey)
+  - **Ollama** - Local LLM runtime for privacy-focused deployment
 
 ## 🛠️ Quick Start
 
@@ -30,7 +32,7 @@ A powerful AI-driven research API that conducts comprehensive research using mul
 2. **Set up environment**
    ```bash
    cp .env.example .env
-   # Edit .env and add your GEMINI_API_KEY
+   # Edit .env and configure your LLM provider (see Configuration section)
    ```
 
 3. **Run with Docker**
@@ -50,7 +52,7 @@ A powerful AI-driven research API that conducts comprehensive research using mul
    git clone <repository-url>
    cd deepsearch-api
    cp .env.example .env
-   # Edit .env with your GEMINI_API_KEY
+   # Edit .env with your LLM provider configuration
    ```
 
 2. **Install dependencies**
@@ -69,13 +71,32 @@ A powerful AI-driven research API that conducts comprehensive research using mul
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root. The system supports both Google GenAI and Ollama as LLM providers:
 
+#### Option 1: Google GenAI (default)
 ```env
-# Required
+LLM_PROVIDER=gemini
 GEMINI_API_KEY=your_google_genai_api_key_here
+GEMINI_MODEL=gemini-2.5-flash
+```
 
-# Optional Configuration
+#### Option 2: Ollama (local LLM)
+```env
+LLM_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=gpt-oss:20b
+OLLAMA_REQUEST_TIMEOUT=120.0
+OLLAMA_CONTEXT_WINDOW=8000
+```
+
+**Note:** When using Ollama, ensure you have:
+1. Ollama installed and running locally
+2. The desired model pulled (e.g., `ollama pull gpt-oss:20b`)
+3. The llama-index-llms-ollama package installed: `pip install llama-index-llms-ollama`
+
+#### Additional Configuration (Optional)
+```env
+# Server Settings
 API_HOST=0.0.0.0
 API_PORT=8000
 LOG_LEVEL=INFO
@@ -196,20 +217,25 @@ docker-compose -f docker-compose.prod.yml --profile production up
 
 ### Common Issues
 
-1. **"Invalid API key" error**
+1. **"Invalid API key" error** (Google GenAI)
    - Verify your `GEMINI_API_KEY` in the `.env` file
    - Ensure the API key has proper permissions
 
-2. **Port 8000 already in use**
+2. **Ollama connection issues**
+   - Ensure Ollama is running: `ollama serve`
+   - Verify the model is available: `ollama list`
+   - Check `OLLAMA_BASE_URL` matches your Ollama instance
+
+3. **Port 8000 already in use**
    ```bash
    # Change port in .env file or use different port
    docker-compose up --build -p 8001:8000
    ```
 
-3. **WebSocket connection fails**
+4. **WebSocket connection fails**
    - Check firewall settings
    - Ensure WebSocket support in your client
 
-4. **Research timeout**
+5. **Research timeout**
    - Increase `DEFAULT_TIMEOUT` in `.env`
    - Check internet connection for web search
