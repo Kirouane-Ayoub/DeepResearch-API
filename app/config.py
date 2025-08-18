@@ -13,8 +13,16 @@ class Settings(BaseSettings):
     API_PORT: int = 8000
     API_RELOAD: bool = True
 
+    # LLM Provider Configuration
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")  # "gemini" or "ollama"
     # Google GenAI Configuration
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    # Ollama Configuration
+    OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "gpt-oss:20b")
+    OLLAMA_REQUEST_TIMEOUT: float = float(os.getenv("OLLAMA_REQUEST_TIMEOUT", "120.0"))
+    OLLAMA_CONTEXT_WINDOW: int = int(os.getenv("OLLAMA_CONTEXT_WINDOW", "8000"))
 
     # Research Configuration
     DEFAULT_TIMEOUT: int = 300
