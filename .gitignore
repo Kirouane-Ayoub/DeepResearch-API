@@ -1,0 +1,7 @@
+*.pyc
+*.pdf
+.env
+*.xml
+*.log
+*.json
+*.db
