@@ -25,7 +25,30 @@ from llama_index.llms.google_genai import GoogleGenAI
 # Load environment variables from .env file
 load_dotenv(override=True)
 
-llm = GoogleGenAI(model="gemini-2.5-flash")
+
+def get_llm():
+    """Factory function to create LLM based on configuration"""
+    if settings.LLM_PROVIDER.lower() == "ollama":
+        try:
+            from llama_index.llms.ollama import Ollama
+
+            return Ollama(
+                model=settings.OLLAMA_MODEL,
+                base_url=settings.OLLAMA_BASE_URL,
+                request_timeout=settings.OLLAMA_REQUEST_TIMEOUT,
+                context_window=settings.OLLAMA_CONTEXT_WINDOW,
+            )
+        except ImportError as e:
+            print(
+                "ERROR: Ollama integration not available. Install with: pip install llama-index-llms-ollama"
+            )
+            print(f"Falling back to Gemini. Error: {e}")
+            return GoogleGenAI(model=settings.GEMINI_MODEL)
+    else:
+        return GoogleGenAI(model=settings.GEMINI_MODEL)
+
+
+llm = get_llm()
 
 
 def search_web(query: str, max_retries: int = 3):
