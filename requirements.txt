@@ -3,6 +3,7 @@ uvicorn[standard]
 pydantic-settings
 structlog
 prometheus-client
-llama-index 
-llama-index-utils-workflow 
+llama-index
+llama-index-utils-workflow
 llama-index-llms-google-genai
+llama-index-llms-ollama
